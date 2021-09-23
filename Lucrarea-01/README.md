@@ -6,7 +6,7 @@
 
 **Sarcina 1**
 
-Analizați și rulați exemplele din directorul exemple.
+Analizați și rulați soluția din directorul exemple. Identificați elementele noi vis-a-vis de modul în care este scris și organizat codul sursă.
 
 **Sarcina 2**
 
