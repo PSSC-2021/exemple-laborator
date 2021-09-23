@@ -6,7 +6,5 @@ using System.Threading.Tasks;
 
 namespace Exemple.Domain
 {
-    public static class Student
-    {
-    }
+    public record UnvalidatedStudentGrade(string StudentRegistrationNumber, string Grade);
 }
