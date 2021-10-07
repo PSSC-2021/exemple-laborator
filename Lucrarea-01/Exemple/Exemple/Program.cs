@@ -14,14 +14,19 @@ namespace Exemple
             var listOfGrades = ReadListOfGrades().ToArray();
             UnvalidatedExamGrades unvalidatedGrades = new(listOfGrades);
             IExamGrades result = ValidateExamGrades(unvalidatedGrades);
+
             result.Match(
                 whenUnvalidatedExamGrades: unvalidatedResult => unvalidatedGrades,
                 whenPublishedExamGrades: publishedResult => publishedResult,
                 whenInvalidatedExamGrades: invalidResult => invalidResult,
                 whenValidatedExamGrades: validatedResult => PublishExamGrades(validatedResult)
             );
-
-            Console.WriteLine("Hello World!");
+ 
+            foreach(var item in listOfGrades)
+            {
+                Console.WriteLine(item.StudentRegistrationNumber);
+                Console.WriteLine(item.Grade);
+            }
         }
 
         private static List<UnvalidatedStudentGrade> ReadListOfGrades()
@@ -52,9 +57,11 @@ namespace Exemple
             new InvalidatedExamGrades(new List<UnvalidatedStudentGrade>(), "Random errror")
             : new ValidatedExamGrades(new List<ValidatedStudentGrade>());
 
-        private static IExamGrades PublishExamGrades(ValidatedExamGrades validExamGrades) =>
-            new PublishedExamGrades(new List<ValidatedStudentGrade>(), DateTime.Now);
-
+        private static IExamGrades PublishExamGrades(ValidatedExamGrades validExamGrades)
+        {
+            Console.WriteLine("Publicat");          
+            return new PublishedExamGrades(new List<ValidatedStudentGrade>(), DateTime.Now);
+        }
         private static string? ReadValue(string prompt)
         {
             Console.Write(prompt);
