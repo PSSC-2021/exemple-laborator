@@ -1,4 +1,4 @@
-# Lucrarea 2: Implementarea unui „workflow” DDD 
+# Lucrarea 3: Implementarea unui „workflow” DDD 
 
 **Context**: căruciorul de cumpărături pentru un magazin virtual. 
 
