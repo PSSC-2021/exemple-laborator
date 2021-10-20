@@ -2,7 +2,7 @@
 
 **Context**: căruciorul de cumpărături pentru un magazin virtual. 
 
-**Obiective**: reprezentarea valorilor optionale, tratarea erorilor
+**Obiective**: reprezentarea valorilor opționale, tratarea erorilor
 
 **Sarcina 1**
 
@@ -10,13 +10,13 @@ Analizați și rulați soluția din directorul exemple. Identificați elementele
 
 **Sarcina 2**
 
-în contextul workflow-ului pentru plasarea unei comenzi folositi:
-* Option < T > [4] pentru a reprezenta rezoltatul conversiei de la string la codul produsului, respectiv cantitatea
+În contextul workflow-ului pentru plasarea unei comenzi folosiți:
+* Option < T > [4] pentru a reprezenta rezultatul conversiei de la string la codul produsului, respectiv cantitatea
 * Try < T >[5] sau TryAsync < T >[6] pentru a reprezenta rezultatele următoarelor funcții
     * verificarea existenței produsului pe baza codului de produs
     * verificarea stocului
     * verificarea adresei de livrare
-* folositi expresii LINQ pentru a combina mai multe rezultate de tipul Option < T >, respectiv mai multe rezultate de tipul Try < T >/TryAsync < T >
+* folositi expresii LINQ pentru a combina mai multe rezultate de tipul Option < T >, respectiv mai multe rezultate de tipul Try < T >/TryAsync < T >. Folosiți tipul Either/EitherAsync pentru a putea combina tipuri diferite de rezultate.
 
 **Referințe**
 
