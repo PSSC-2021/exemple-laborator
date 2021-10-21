@@ -23,18 +23,18 @@
 
         public static bool TryParse(string quantityString, out Quantity quantity)
         {
-            bool isValid = false;
+            bool valid = false;
             quantity = null;
             if (int.TryParse(quantityString, out int numericQuantity))
             {
                 if (is_valid(numericQuantity))
                 {
-                    isValid = true;
+                    valid = true;
                     quantity = new(numericQuantity);
                 }
             }
 
-            return isValid;
+            return valid;
         }
 
         private static bool is_valid(int numericQuantity) => numericQuantity > 0;

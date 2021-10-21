@@ -4,7 +4,7 @@ namespace Laborator2_PSSC.Domain
 {
     public record Address
     {
-        private static readonly Regex ValidPattern = new("{str, nr}");
+        private static readonly Regex ValidPattern = new("^.*$");
 
         public string _address { get; }
 

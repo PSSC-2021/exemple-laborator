@@ -4,7 +4,7 @@ namespace Laborator2_PSSC.Domain
 {
     public record ProductCode
     {
-        private static readonly Regex ValidPattern = new("^1[0-9]{3}$");
+        private static readonly Regex ValidPattern = new("^.*$");
 
         public string Code { get; }
 

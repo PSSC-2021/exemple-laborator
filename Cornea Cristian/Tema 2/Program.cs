@@ -29,8 +29,6 @@ namespace Laborator2_PSSC
                         return @event;
                     }
                 );
-
-            Console.WriteLine("Hello World!");
         }
 
         private static List<EmptyShoppingCart> ReadListOfShoppingCarts()
@@ -63,7 +61,7 @@ namespace Laborator2_PSSC
                     break;
                 }
 
-                listOfShoppingCarts.Add(new(quantity, product_code, address, price));
+                listOfShoppingCarts.Add(new(product_code, quantity, address, price));
             } while (true);
             return listOfShoppingCarts;
         }
