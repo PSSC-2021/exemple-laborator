@@ -10,11 +10,11 @@ namespace Laborator2_PSSC.Domain
         {
         }
 
-        public InvalidQuantityException(string? message) : base(message)
+        public InvalidQuantityException(string ? message) : base(message)
         {
         }
 
-        public InvalidQuantityException(string? message, Exception? innerException) : base(message, innerException)
+        public InvalidQuantityException(string ? message, Exception ? innerException) : base(message, innerException)
         {
         }
 

@@ -10,11 +10,11 @@ namespace Laborator2_PSSC.Domain
             {
             }
 
-            public InvalidProductCodeException(string? message) : base(message)
+            public InvalidProductCodeException(string ? message) : base(message)
             {
             }
 
-            public InvalidProductCodeException(string? message, Exception? innerException) : base(message, innerException)
+            public InvalidProductCodeException(string ? message, Exception ? innerException) : base(message, innerException)
             {
             }
 

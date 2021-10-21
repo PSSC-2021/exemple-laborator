@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Laborator2_PSSC.Domain
 {
@@ -12,7 +8,7 @@ namespace Laborator2_PSSC.Domain
 
         public Price(decimal value)
         {
-            if (IsValid(value))
+            if (is_valid(value))
             {
                 Value = value;
             }
@@ -26,8 +22,7 @@ namespace Laborator2_PSSC.Domain
 
         public Price Round()
         {
-            var roundedValue = Math.Round(Value);
-            return new Price(roundedValue);
+            return new Price(Math.Round(Value));
         }
 
         public override string ToString()
@@ -41,7 +36,7 @@ namespace Laborator2_PSSC.Domain
             price = null;
             if (decimal.TryParse(priceString, out decimal numericPrice))
             {
-                if (IsValid(numericPrice))
+                if (is_valid(numericPrice))
                 {
                     isValid = true;
                     price = new(numericPrice);
@@ -51,6 +46,6 @@ namespace Laborator2_PSSC.Domain
             return isValid;
         }
 
-        private static bool IsValid(decimal numericPrice) => numericPrice >= 0;
+        private static bool is_valid(decimal numericPrice) => numericPrice >= 0;
     }
 }

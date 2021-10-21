@@ -25,13 +25,13 @@ namespace Laborator2_PSSC.Domain
             return Code;
         }
 
-        private static bool IsValid(string stringValue) => ValidPattern.IsMatch(stringValue);
+        private static bool is_valid(string stringValue) => ValidPattern.IsMatch(stringValue);
 
         public static bool TryParse(string productCodeString, out ProductCode productCode)
         {
             bool isValid = false;
             productCode = null;
-            if (IsValid(productCodeString))
+            if (is_valid(productCodeString))
             {
                 isValid = true;
                 productCode = new(productCodeString);

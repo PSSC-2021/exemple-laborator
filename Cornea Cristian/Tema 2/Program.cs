@@ -9,7 +9,7 @@ namespace Laborator2_PSSC
     {
         private static readonly Random random = new Random();
 
-        static void Main(string[] args)
+        static void Main()
         {
             var listOfGrades = ReadListOfShoppingCarts().ToArray();
             PayShoppingCartCommand command = new(listOfGrades);

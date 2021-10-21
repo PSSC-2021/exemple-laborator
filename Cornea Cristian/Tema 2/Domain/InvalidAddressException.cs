@@ -10,11 +10,11 @@ namespace Laborator2_PSSC.Domain
         {
         }
 
-        public InvalidAddressException(string? message) : base(message)
+        public InvalidAddressException(string ? message) : base(message)
         {
         }
 
-        public InvalidAddressException(string? message, Exception? innerException) : base(message, innerException)
+        public InvalidAddressException(string ? message, Exception ? innerException) : base(message, innerException)
         {
         }
 

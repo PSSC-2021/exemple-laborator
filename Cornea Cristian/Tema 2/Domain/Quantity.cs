@@ -6,7 +6,7 @@
 
         public Quantity(int value)
         {
-            if (IsValid(value))
+            if (is_valid(value))
             {
                 Value = value;
             }
@@ -27,7 +27,7 @@
             quantity = null;
             if (int.TryParse(quantityString, out int numericQuantity))
             {
-                if (IsValid(numericQuantity))
+                if (is_valid(numericQuantity))
                 {
                     isValid = true;
                     quantity = new(numericQuantity);
@@ -37,6 +37,6 @@
             return isValid;
         }
 
-        private static bool IsValid(int numericQuantity) => numericQuantity > 0;
+        private static bool is_valid(int numericQuantity) => numericQuantity > 0;
     }
 }

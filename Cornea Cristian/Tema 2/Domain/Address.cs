@@ -24,18 +24,19 @@ namespace Laborator2_PSSC.Domain
         {
             return _address;
         }
-        private static bool IsValid(string stringValue) => ValidPattern.IsMatch(stringValue);
+
+        private static bool is_valid(string stringValue) => ValidPattern.IsMatch(stringValue);
 
         public static bool TryParse(string addressString, out Address address)
         {
-            bool isValid = false;
+            bool valid = false;
             address = null;
-            if (IsValid(addressString))
+            if (is_valid(addressString))
             {
-                isValid = true;
+                valid = true;
                 address = new(addressString);
             }
-            return isValid;
+            return valid;
         }
 
     }

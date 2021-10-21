@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using static Laborator2_PSSC.Domain.ShoppingCarts;
 
 namespace Laborator2_PSSC.Domain
