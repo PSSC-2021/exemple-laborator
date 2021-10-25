@@ -59,11 +59,18 @@ namespace Exemple
                     break;
                 }
 
+                var pret = ReadValue("Pret: ");
+                if (string.IsNullOrEmpty(pret))
+                {
+                    break;
+                }
+
                 CodProdus obCod = new CodProdus(Int32.Parse(cod));
                 Cantitate obCantitate = new Cantitate(Int32.Parse(cantitate));
                 Adresa obAdresa = new Adresa(adresa);
+                Pret obPret = new Pret(Int32.Parse(pret));
 
-                listaCosuri.Add(new (obCod, obCantitate, obAdresa));
+                listaCosuri.Add(new (obCod, obCantitate, obAdresa, obPret));
             } while (true);
             return listaCosuri;
         }

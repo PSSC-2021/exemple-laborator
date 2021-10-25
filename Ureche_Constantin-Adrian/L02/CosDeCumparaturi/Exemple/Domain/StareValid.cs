@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace CosDeCumparaturi.Domain
 {
-    public record StareValid(CodProdus cod, Cantitate cantitate, Adresa adresa);
+    public record StareValid(CodProdus cod, Cantitate cantitate, Adresa adresa, Pret pret);
 }

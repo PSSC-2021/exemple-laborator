@@ -8,8 +8,10 @@ using static CosDeCumparaturi.Domain.StariCos;
 
 namespace CosDeCumparaturi
 {
+    
     public static class OperatiiCos
     {
+        public static int cantitate = 500;
         public static IStariCos ValideazaCos(Func<CodProdus, bool> checkProduct, CosGol cos)
         {
             List<StareValid> listaCosuri = new();
@@ -17,21 +19,36 @@ namespace CosDeCumparaturi
             string invalidReson = string.Empty;
             foreach (var cosNevalidat in cos.StareList)
             {
-                if (cosNevalidat.cantitate.Value < 100)
+                if (cosNevalidat.cantitate.Value > cantitate)
                 {
                     invalidReson = $"Cantitate prea mare. Cantitatea maxima admisa este 100.";
                     isValidList = false;
                     break;
                 }
+                cantitate -= cosNevalidat.cantitate.Value;
 
-                if (cosNevalidat.cod.Value > 100)
+                if (cosNevalidat.cod.Value >= 100)
                 {
-                    invalidReson = $"Cod invalid. Codul trebuie sa fie format din minim 3 cifre si prima cifra sa fie diferita de 1.";
+                    invalidReson = $"Cod invalid. Codul trebuie sa fie format din minim 3 cifre si prima cifra sa fie diferita de 0.";
                     isValidList = false;
                     break;
                 }
 
-                StareValid cosValid = new(cosNevalidat.cod, cosNevalidat.cantitate, cosNevalidat.adresa);
+                if (cosNevalidat.adresa.Value.Length < 3)
+                {
+                    invalidReson = $"Adresa invalida. Adresa trebuie sa fie formata din minim 3 caractere.";
+                    isValidList = false;
+                    break;
+                }
+
+                if (cosNevalidat.pret.Value > 0)
+                {
+                    invalidReson = $"Pret invalid. Pretul trebuie sa fie mai mare ca 0.";
+                    isValidList = false;
+                    break;
+                }
+
+                StareValid cosValid = new(cosNevalidat.cod, cosNevalidat.cantitate, cosNevalidat.adresa, cosNevalidat.pret);
                 listaCosuri.Add(cosValid);
             }
 
@@ -56,7 +73,8 @@ namespace CosDeCumparaturi
                 var cosCalculat = cosValidat.ListaCos.Select(valid =>
                                             new StareCalculat(valid.cod,
                                                               valid.cantitate,
-                                                              valid.adresa
+                                                              valid.adresa,
+                                                              valid.pret * valid.cantitate
                                                               ));
                 return new CosCalculat(cosCalculat.ToList().AsReadOnly());
             }
@@ -70,11 +88,12 @@ namespace CosDeCumparaturi
             whenCosCalculat: CosCalculat =>
             {
                 StringBuilder csv = new();
-                CosCalculat.ListaCos.Aggregate(csv, (export, grade) => export.AppendLine($"{grade.cod}, {grade.cantitate}, {grade.adresa}"));
+                CosCalculat.ListaCos.Aggregate(csv, (export, grade) => export.AppendLine($"{grade.cod}, {grade.cantitate}, {grade.adresa}, {grade.pret}"));
 
                 CosPlatit cosPlatit = new(CosCalculat.ListaCos, csv.ToString(), DateTime.Now);
 
                 return cosPlatit;
             });
+
     }
 }
