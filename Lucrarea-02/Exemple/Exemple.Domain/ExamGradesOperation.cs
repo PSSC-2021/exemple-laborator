@@ -29,7 +29,8 @@ namespace Exemple.Domain
                     isValidList = false;
                     break;
                 }
-                if (!StudentRegistrationNumber.TryParse(unvalidatedGrade.StudentRegistrationNumber, out StudentRegistrationNumber studentRegistrationNumber))
+                if (!StudentRegistrationNumber.TryParse(unvalidatedGrade.StudentRegistrationNumber, out StudentRegistrationNumber studentRegistrationNumber)
+                    && checkStudentExists(studentRegistrationNumber))
                 {
                     invalidReson = $"Invalid student registration number ({unvalidatedGrade.StudentRegistrationNumber})";
                     isValidList = false;

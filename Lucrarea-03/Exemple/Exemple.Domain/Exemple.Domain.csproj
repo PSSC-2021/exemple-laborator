@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CSharp.Choices" Version="2.0.1" />
+    <PackageReference Include="LanguageExt.Core" Version="3.4.15" />
+  </ItemGroup>
+
+</Project>
