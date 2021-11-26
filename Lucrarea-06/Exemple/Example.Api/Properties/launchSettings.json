@@ -22,8 +22,7 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ConnectionStrings:ServiceBus": "Endpoint=sb://pssc2021.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=sI5opLvNaqHu1eUTLj6gckhcJJx59JIRuLzLb6aPml4="
+        "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "dotnetRunMessages": "true"
