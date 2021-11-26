@@ -1,4 +1,4 @@
-# Lucrarea 5: Comunicare între contexte folosind evenimente
+# Lucrarea 6: Comunicare între contexte folosind evenimente
 
 **Context**: căruciorul de cumpărături pentru un magazin virtual. 
 
