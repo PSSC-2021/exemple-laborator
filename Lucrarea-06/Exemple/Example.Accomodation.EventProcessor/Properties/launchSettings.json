@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Example.Accomodation.EventProcessor": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "NETCORE_ENVIRONMENT": "development"
+      }
+    }
+  }
+}
