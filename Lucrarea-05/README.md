@@ -1,8 +1,8 @@
-# Lucrarea 5: Folosirea unui model DDD pentru a implementa un API Web
+# Lucrarea 4: Interacțiunea cu baza de date
 
 **Context**: căruciorul de cumpărături pentru un magazin virtual. 
 
-**Obiective**: implementarea unui API Web folosind un model DDD
+**Obiective**: citirea/scrierea din/în baza de date
 
 **Sarcina 1**
 
@@ -11,9 +11,10 @@ Analizați și rulați soluția din directorul exemple. Identificați elementele
 **Sarcina 2**
 
 În contextul workflow-ului pentru plasarea unei comenzi realizați următoarele:
-* implementare endpoint pentru a vizualiza căruciorul de cumărături
-* implementați endpoint adăugare produs în coșul de cumpărături
-* implementare endpoint marcare cărucior de cumpărături plătit
+* creați o baza de date cu următoarele tabele: Product(ProductId, Code, Stoc), OrderHeader(OrderId, Address, Total), OrderLine(OrderLineId, ProductId, Quantity, Price)
+* înainte de a executa workflow-ul încărcați starea din baza de date
+* implementați funcțiile de verificare a existenței produsului și stocului astfel încât să folosească informații din baza de date
+* după executare workflow-ului salvați rezultatul în baza de date
 
 **Referințe**
 

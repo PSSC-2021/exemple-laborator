@@ -22,9 +22,9 @@ namespace Exemple.Domain.Models
             public IReadOnlyCollection<UnvalidatedStudentGrade> GradeList { get; }
         }
 
-        public record InvalidExamGrades: IExamGrades
+        public record InvalidatedExamGrades: IExamGrades
         {
-            internal InvalidExamGrades(IReadOnlyCollection<UnvalidatedStudentGrade> gradeList, string reason)
+            internal InvalidatedExamGrades(IReadOnlyCollection<UnvalidatedStudentGrade> gradeList, string reason)
             {
                 GradeList = gradeList;
                 Reason = reason;

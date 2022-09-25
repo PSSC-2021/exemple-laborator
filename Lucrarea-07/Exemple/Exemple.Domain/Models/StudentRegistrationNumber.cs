@@ -1,21 +1,17 @@
 ﻿using LanguageExt;
 using static LanguageExt.Prelude;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Exemple.Domain.Models
 {
     public record StudentRegistrationNumber
     {
-        private static readonly Regex ValidPattern = new("^LM[0-9]{5}$");
+        public const string Pattern = "^LM[0-9]{5}$";
+        private static readonly Regex PatternRegex = new(Pattern);
 
         public string Value { get; }
 
-        private StudentRegistrationNumber(string value)
+        internal StudentRegistrationNumber(string value)
         {
             if (IsValid(value))
             {
@@ -27,7 +23,7 @@ namespace Exemple.Domain.Models
             }
         }
 
-        private static bool IsValid(string stringValue) => ValidPattern.IsMatch(stringValue);
+        private static bool IsValid(string stringValue) => PatternRegex.IsMatch(stringValue);
 
         public override string ToString()
         {

@@ -34,18 +34,6 @@ namespace Exemple.Domain.Models
             return $"{Value:0.##}";
         }
 
-        public static Option<Grade> TryParseGrade(decimal numericGrade)
-        {
-            if (IsValid(numericGrade))
-            {
-                return Some<Grade>(new(numericGrade));
-            }
-            else
-            {
-                return None;
-            }
-        }
-
         public static Option<Grade> TryParseGrade(string gradeString)
         {
             if(decimal.TryParse(gradeString, out decimal numericGrade) && IsValid(numericGrade))

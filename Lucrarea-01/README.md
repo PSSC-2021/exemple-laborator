@@ -1,22 +1,18 @@
-# Lucrarea 1: Crearea unui sistem de tipuri pentru un model Domain Driven Design (DDD) 
+# Lucrarea 1: Tipuri de date imutabile. Discriminated Unions 
 
-**Context**: căruciorul de cumpărături pentru un magazin virtual. 
-
-**Obiective**: înțelegerea tipului de date choice/discriminated union [1,2], înțelegerea conceptelor de value type și entity type, construirea unui sistem de tipuri [3] specific pentru un anumit domeniu 
+**Obiective**: înțelegerea tipului de date record si al tipului choice/discriminated union [1,2]
 
 **Sarcina 1**
 
-Analizați și rulați soluția din directorul exemple. Identificați elementele noi vis-a-vis de modul în care este scris și organizat codul sursă.
+Folosind comanda dontnet [3] creați o aplicație consolă.
 
 **Sarcina 2**
 
-Implementarea unui sistem de tipuri pentru a reprezenta un cărucior de cumpărături și realizarea unei aplicații consolă care să folosească acele tipuri. 
-Sistemul de tipuri trebuie să folosească: 
-* un choice type pentru a reprezenta un cărucior în următoarele stările: gol, nevalidat, validate, plătit.  
-* value type pentru a reprezenta cantitatea produselor comandate, codul produsului, adresa 
-* entity type pentru a reprezenta căruciorul de cumpărături, clientul 
+Folosind Visual Studio Code [4]:
+* implementați un tip de date imutabil pentru a reprezenta o comanda ce conține un contact (nume, prenume, nr. telefon, adresă) și o listă de produse (cod produs și cantitate exprimată în unități sau kg).  
+* cantitatea va fi implementată folosind CShapr Choices [2]
 
-Aplicația consolă trebuie să permită crearea unui cărucior gol, adăugarea de produse în cărucior, trecerea unui cărucior dintr-o stare în altă fără a aplica validări. 
+Aplicația consolă trebuie să permită crearea unei comenzi, adăugarea de produse în comandă și specificarea cantității in Kg sau unitați pentru fiecare produs adăugat. 
 
 **Referințe**
 
@@ -24,4 +20,7 @@ Aplicația consolă trebuie să permită crearea unui cărucior gol, adăugarea 
 
 [2] https://www.nuget.org/packages/CSharp.Choices/
 
-[3] Scott Wlaschin, [Domain Modeling Made Functional](https://www.amazon.com/Domain-Modeling-Made-Functional-Domain-Driven-ebook/dp/B07B44BPFB/ref=sr_1_1?dchild=1&keywords=Domain+Modeling+Made+Functional&qid=1632338254&sr=8-1), Pragmatic Bookshelf, 2018  
+[3] https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet
+
+[4] https://code.visualstudio.com/
+

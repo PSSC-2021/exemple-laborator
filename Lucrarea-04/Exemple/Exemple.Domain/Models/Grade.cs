@@ -8,7 +8,7 @@ namespace Exemple.Domain.Models
     {
         public decimal Value { get; }
 
-        internal Grade(decimal value)
+        public Grade(decimal value)
         {
             if (IsValid(value))
             {

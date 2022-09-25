@@ -10,6 +10,9 @@ using Exemple.Domain.Repositories;
 using System.Linq;
 using static LanguageExt.Prelude;
 using Microsoft.Extensions.Logging;
+using Example.Events;
+using Example.Dto.Events;
+using Example.Dto.Models;
 
 namespace Exemple.Domain
 {
@@ -18,12 +21,15 @@ namespace Exemple.Domain
         private readonly IStudentsRepository studentsRepository;
         private readonly IGradesRepository gradesRepository;
         private readonly ILogger<PublishGradeWorkflow> logger;
+        private readonly IEventSender eventSender;
 
-        public PublishGradeWorkflow(IStudentsRepository studentsRepository, IGradesRepository gradesRepository, ILogger<PublishGradeWorkflow> logger)
+        public PublishGradeWorkflow(IStudentsRepository studentsRepository, IGradesRepository gradesRepository,
+                                    ILogger<PublishGradeWorkflow> logger, IEventSender eventSender)
         {
             this.studentsRepository = studentsRepository;
             this.gradesRepository = gradesRepository;
             this.logger = logger;
+            this.eventSender = eventSender;
         }
 
         public async Task<IExamGradesPublishedEvent> ExecuteAsync(PublishGradesCommand command)
@@ -36,21 +42,41 @@ namespace Exemple.Domain
                                           .ToEither(ex => new FailedExamGrades(unvalidatedGrades.GradeList, ex) as IExamGrades)
                          let checkStudentExists = (Func<StudentRegistrationNumber, Option<StudentRegistrationNumber>>)(student => CheckStudentExists(students, student))
                          from publishedGrades in ExecuteWorkflowAsync(unvalidatedGrades, existingGrades, checkStudentExists).ToAsync()
-                         from _ in gradesRepository.TrySaveGrades(publishedGrades)
+                         from saveResult in gradesRepository.TrySaveGrades(publishedGrades)
                                           .ToEither(ex => new FailedExamGrades(unvalidatedGrades.GradeList, ex) as IExamGrades)
-                         select publishedGrades;
+                         let grades = publishedGrades.GradeList.Select(grade => new PublishedStudentGrade(
+                                                        grade.StudentRegistrationNumber,
+                                                        ExamGrade: grade.ExamGrade,
+                                                        ActivityGrade: grade.ActivityGrade,
+                                                        FinalGrade: grade.FinalGrade))
+                         let successfulEvent = new ExamGradesPublishScucceededEvent(grades, publishedGrades.PublishedDate)
+                         let eventToPublish = new GradesPublishedEvent()
+                         {
+                             Grades = grades.Select(g=>new StudentGradeDto()
+                             {
+                                 Name = g.StudentRegistrationNumber.Value, //TODO get name here
+                                 StudentRegistrationNumber = g.StudentRegistrationNumber.Value,
+                                 ActivityGrade = g.ActivityGrade.Value,
+                                 ExamGrade = g.ExamGrade.Value,
+                                 FinalGrade = g.FinalGrade.Value
+                                 
+                             }).ToList()
+                         }
+                         from publishEventResult in eventSender.SendAsync("grades", eventToPublish)
+                                              .ToEither(ex => new FailedExamGrades(unvalidatedGrades.GradeList, ex) as IExamGrades)
+                         select successfulEvent;
 
             return await result.Match(
                     Left: examGrades => GenerateFailedEvent(examGrades) as IExamGradesPublishedEvent,
-                    Right: publishedGrades => new ExamGradesPublishScucceededEvent(publishedGrades.Csv, publishedGrades.PublishedDate)
+                    Right: publishedGrades => publishedGrades
                 );
         }
 
-        private async Task<Either<IExamGrades, PublishedExamGrades>> ExecuteWorkflowAsync(UnvalidatedExamGrades unvalidatedGrades, 
-                                                                                          IEnumerable<CalculatedSudentGrade> existingGrades, 
+        private async Task<Either<IExamGrades, PublishedExamGrades>> ExecuteWorkflowAsync(UnvalidatedExamGrades unvalidatedGrades,
+                                                                                          IEnumerable<CalculatedSudentGrade> existingGrades,
                                                                                           Func<StudentRegistrationNumber, Option<StudentRegistrationNumber>> checkStudentExists)
         {
-            
+
             IExamGrades grades = await ValidateExamGrades(checkStudentExists, unvalidatedGrades);
             grades = CalculateFinalGrades(grades);
             grades = MergeGrades(grades, existingGrades);
@@ -68,7 +94,7 @@ namespace Exemple.Domain
 
         private Option<StudentRegistrationNumber> CheckStudentExists(IEnumerable<StudentRegistrationNumber> students, StudentRegistrationNumber studentRegistrationNumber)
         {
-            if(students.Any(s=>s == studentRegistrationNumber))
+            if (students.Any(s => s == studentRegistrationNumber))
             {
                 return Some(studentRegistrationNumber);
             }

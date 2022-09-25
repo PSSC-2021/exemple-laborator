@@ -34,18 +34,6 @@ namespace Exemple.Domain.Models
             public string Reason { get; }
         }
 
-        public record FailedExamGrades : IExamGrades
-        {
-            internal FailedExamGrades(IReadOnlyCollection<UnvalidatedStudentGrade> gradeList, Exception exception)
-            {
-                GradeList = gradeList;
-                Exception = exception;
-            }
-
-            public IReadOnlyCollection<UnvalidatedStudentGrade> GradeList { get; }
-            public Exception Exception { get; }
-        }
-
         public record ValidatedExamGrades: IExamGrades
         {
             internal ValidatedExamGrades(IReadOnlyCollection<ValidatedStudentGrade> gradesList)

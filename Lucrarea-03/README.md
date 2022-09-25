@@ -1,8 +1,8 @@
-# Lucrarea 3: Implementarea unui „workflow” DDD 
+# Lucrarea 2: Implementarea unui „workflow” DDD 
 
 **Context**: căruciorul de cumpărături pentru un magazin virtual. 
 
-**Obiective**: reprezentarea valorilor opționale, tratarea erorilor
+**Obiective**: descompunerea comportamentului specific unui domeniu în operațiuni (funcții) și combinarea lor pentru a obține un workflow
 
 **Sarcina 1**
 
@@ -10,13 +10,14 @@ Analizați și rulați soluția din directorul exemple. Identificați elementele
 
 **Sarcina 2**
 
-În contextul workflow-ului pentru plasarea unei comenzi folosiți:
-* Option < T > [4] pentru a reprezenta rezultatul conversiei de la string la codul produsului, respectiv cantitatea
-* Try < T >[5] sau TryAsync < T >[6] pentru a reprezenta rezultatele următoarelor funcții
-    * verificarea existenței produsului pe baza codului de produs
-    * verificarea stocului
-    * verificarea adresei de livrare
-* folositi expresii LINQ pentru a combina mai multe rezultate de tipul Option < T >, respectiv mai multe rezultate de tipul Try < T >/TryAsync < T >. Folosiți tipul Either/EitherAsync pentru a putea combina tipuri diferite de rezultate.
+Implementați workflow-ul pentru plasarea unei comenzi și realizați o aplicații consolă care să apeleze workflow-ul creat. 
+Workflow-ul trebuie să conțină următoarele operații:
+* validarea datelor de intrare si conversia la tipurile de date corecte
+* verificarea existenței produsului pe baza codului de produs
+* verificarea stocului
+* verificarea adresei de livrare
+* calcularea prețului
+Workflow-ul se va finaliza cu generarea unui eveniment.
 
 **Referințe**
 
@@ -25,6 +26,3 @@ Analizați și rulați soluția din directorul exemple. Identificați elementele
 [2] https://www.nuget.org/packages/CSharp.Choices/
 
 [3] Scott Wlaschin, [Domain Modeling Made Functional](https://www.amazon.com/Domain-Modeling-Made-Functional-Domain-Driven-ebook/dp/B07B44BPFB/ref=sr_1_1?dchild=1&keywords=Domain+Modeling+Made+Functional&qid=1632338254&sr=8-1), Pragmatic Bookshelf, 2018  
-[4] https://github.com/louthy/language-ext#option
-[5] https://louthy.github.io/language-ext/LanguageExt.Core/LanguageExt/Try_A.htm
-[6] https://louthy.github.io/language-ext/LanguageExt.Core/LanguageExt/TryAsync_A.htm

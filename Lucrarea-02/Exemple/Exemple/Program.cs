@@ -1,9 +1,7 @@
-﻿using Exemple.Domain.Models;
+﻿using Exemple.Domain;
 using System;
 using System.Collections.Generic;
-using static Exemple.Domain.Models.ExamGrades;
-using static Exemple.Domain.ExamGradesOperation;
-using Exemple.Domain;
+using static Exemple.Domain.ExamGrades;
 
 namespace Exemple
 {
@@ -14,23 +12,14 @@ namespace Exemple
         static void Main(string[] args)
         {
             var listOfGrades = ReadListOfGrades().ToArray();
-            PublishGradesCommand command = new(listOfGrades);
-            PublishGradeWorkflow workflow = new PublishGradeWorkflow();
-            var result = workflow.Execute(command, (registrationNumber) => true);
-
+            UnvalidatedExamGrades unvalidatedGrades = new(listOfGrades);
+            IExamGrades result = ValidateExamGrades(unvalidatedGrades);
             result.Match(
-                    whenExamGradesPublishFaildEvent: @event =>
-                    {
-                        Console.WriteLine($"Publish failed: {@event.Reason}");
-                        return @event;
-                    },
-                    whenExamGradesPublishScucceededEvent: @event =>
-                    {
-                        Console.WriteLine($"Publish succeeded.");
-                        Console.WriteLine(@event.Csv);
-                        return @event;
-                    }
-                );
+                whenUnvalidatedExamGrades: unvalidatedResult => unvalidatedGrades,
+                whenPublishedExamGrades: publishedResult => publishedResult,
+                whenInvalidatedExamGrades: invalidResult => invalidResult,
+                whenValidatedExamGrades: validatedResult => PublishExamGrades(validatedResult)
+            );
 
             Console.WriteLine("Hello World!");
         }
@@ -47,22 +36,24 @@ namespace Exemple
                     break;
                 }
 
-                var examGrade = ReadValue("Exam Grade: ");
-                if (string.IsNullOrEmpty(examGrade))
+                var grade = ReadValue("Grade: ");
+                if (string.IsNullOrEmpty(grade))
                 {
                     break;
                 }
 
-                var activityGrade = ReadValue("Activity Grade: ");
-                if (string.IsNullOrEmpty(activityGrade))
-                {
-                    break;
-                }
-
-                listOfGrades.Add(new (registrationNumber, examGrade, activityGrade));
+                listOfGrades.Add(new (registrationNumber, grade));
             } while (true);
             return listOfGrades;
         }
+
+        private static IExamGrades ValidateExamGrades(UnvalidatedExamGrades unvalidatedGrades) =>
+            random.Next(100) > 50 ?
+            new InvalidatedExamGrades(new List<UnvalidatedStudentGrade>(), "Random errror")
+            : new ValidatedExamGrades(new List<ValidatedStudentGrade>());
+
+        private static IExamGrades PublishExamGrades(ValidatedExamGrades validExamGrades) =>
+            new PublishedExamGrades(new List<ValidatedStudentGrade>(), DateTime.Now);
 
         private static string? ReadValue(string prompt)
         {

@@ -22,9 +22,9 @@ namespace Exemple.Domain.Models
             public IReadOnlyCollection<UnvalidatedStudentGrade> GradeList { get; }
         }
 
-        public record InvalidatedExamGrades: IExamGrades
+        public record InvalidExamGrades: IExamGrades
         {
-            internal InvalidatedExamGrades(IReadOnlyCollection<UnvalidatedStudentGrade> gradeList, string reason)
+            internal InvalidExamGrades(IReadOnlyCollection<UnvalidatedStudentGrade> gradeList, string reason)
             {
                 GradeList = gradeList;
                 Reason = reason;
@@ -32,6 +32,18 @@ namespace Exemple.Domain.Models
 
             public IReadOnlyCollection<UnvalidatedStudentGrade> GradeList { get; }
             public string Reason { get; }
+        }
+
+        public record FailedExamGrades : IExamGrades
+        {
+            internal FailedExamGrades(IReadOnlyCollection<UnvalidatedStudentGrade> gradeList, Exception exception)
+            {
+                GradeList = gradeList;
+                Exception = exception;
+            }
+
+            public IReadOnlyCollection<UnvalidatedStudentGrade> GradeList { get; }
+            public Exception Exception { get; }
         }
 
         public record ValidatedExamGrades: IExamGrades

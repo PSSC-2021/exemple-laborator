@@ -14,12 +14,12 @@ namespace Exemple.Domain.Models
 
         public record ExamGradesPublishScucceededEvent : IExamGradesPublishedEvent 
         {
-            public string Csv{ get;}
+            public IEnumerable<PublishedStudentGrade> Grades{ get; }
             public DateTime PublishedDate { get; }
 
-            internal ExamGradesPublishScucceededEvent(string csv, DateTime publishedDate)
+            internal ExamGradesPublishScucceededEvent(IEnumerable<PublishedStudentGrade> grades, DateTime publishedDate)
             {
-                Csv = csv;
+                Grades = grades;
                 PublishedDate = publishedDate;
             }
         }

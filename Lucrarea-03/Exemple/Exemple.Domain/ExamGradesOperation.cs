@@ -1,87 +1,85 @@
 ﻿using Exemple.Domain.Models;
-using static LanguageExt.Prelude;
-using LanguageExt;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using static Exemple.Domain.Models.ExamGrades;
 using System.Threading.Tasks;
+using static Exemple.Domain.Models.ExamGrades;
 
 namespace Exemple.Domain
 {
     public static class ExamGradesOperation
     {
-        public static Task<IExamGrades> ValidateExamGrades(Func<StudentRegistrationNumber, TryAsync<bool>> checkStudentExists, UnvalidatedExamGrades examGrades) =>
-            examGrades.GradeList
-                      .Select(ValidateStudentGrade(checkStudentExists))
-                      .Aggregate(CreateEmptyValatedGradesList().ToAsync(), ReduceValidGrades)
-                      .MatchAsync(
-                            Right: validatedGrades => new ValidatedExamGrades(validatedGrades),
-                            LeftAsync: errorMessage => Task.FromResult((IExamGrades)new InvalidExamGrades(examGrades.GradeList, errorMessage))
-                      );
-
-        private static Func<UnvalidatedStudentGrade, EitherAsync<string, ValidatedStudentGrade>> ValidateStudentGrade(Func<StudentRegistrationNumber, TryAsync<bool>> checkStudentExists) =>
-            unvalidatedStudentGrade => ValidateStudentGrade(checkStudentExists, unvalidatedStudentGrade);
-
-        private static EitherAsync<string, ValidatedStudentGrade> ValidateStudentGrade(Func<StudentRegistrationNumber, TryAsync<bool>> checkStudentExists, UnvalidatedStudentGrade unvalidatedGrade)=>
-            from examGrade in Grade.TryParseGrade(unvalidatedGrade.ExamGrade)
-                                   .ToEitherAsync(() => $"Invalid exam grade ({unvalidatedGrade.StudentRegistrationNumber}, {unvalidatedGrade.ExamGrade})")
-            from activityGrade in Grade.TryParseGrade(unvalidatedGrade.ActivityGrade)
-                                   .ToEitherAsync(() => $"Invalid activity grade ({unvalidatedGrade.StudentRegistrationNumber}, {unvalidatedGrade.ActivityGrade})")
-            from studentRegistrationNumber in StudentRegistrationNumber.TryParse(unvalidatedGrade.StudentRegistrationNumber)
-                                   .ToEitherAsync(() => $"Invalid student registration number ({unvalidatedGrade.StudentRegistrationNumber})")
-            from studentExists in checkStudentExists(studentRegistrationNumber)
-                                   .ToEither(error => error.ToString())
-            select new ValidatedStudentGrade(studentRegistrationNumber, examGrade, activityGrade);
-
-        private static Either<string, List<ValidatedStudentGrade>> CreateEmptyValatedGradesList() =>
-            Right(new List<ValidatedStudentGrade>());
-
-        private static EitherAsync<string, List<ValidatedStudentGrade>> ReduceValidGrades(EitherAsync<string, List<ValidatedStudentGrade>> acc, EitherAsync<string, ValidatedStudentGrade> next) =>
-            from list in acc
-            from nextGrade in next
-            select list.AppendValidGrade(nextGrade);
-
-        private static List<ValidatedStudentGrade> AppendValidGrade(this List<ValidatedStudentGrade> list, ValidatedStudentGrade validGrade)
+        public static IExamGrades ValidateExamGrades(Func<StudentRegistrationNumber, bool> checkStudentExists, UnvalidatedExamGrades examGrades)
         {
-            list.Add(validGrade);
-            return list;
+            List<ValidatedStudentGrade> validatedGrades = new();
+            bool isValidList = true;
+            string invalidReson = string.Empty;
+            foreach(var unvalidatedGrade in examGrades.GradeList)
+            {
+                if (!Grade.TryParseGrade(unvalidatedGrade.ExamGrade, out Grade examGrade))
+                {
+                    invalidReson = $"Invalid exam grade ({unvalidatedGrade.StudentRegistrationNumber}, {unvalidatedGrade.ExamGrade})";
+                    isValidList = false;
+                    break;
+                }
+                if (!Grade.TryParseGrade(unvalidatedGrade.ActivityGrade, out Grade activityGrade))
+                {
+                    invalidReson = $"Invalid activity grade ({unvalidatedGrade.StudentRegistrationNumber}, {unvalidatedGrade.ActivityGrade})";
+                    isValidList = false;
+                    break;
+                }
+                if (!StudentRegistrationNumber.TryParse(unvalidatedGrade.StudentRegistrationNumber, out StudentRegistrationNumber studentRegistrationNumber)
+                    && checkStudentExists(studentRegistrationNumber))
+                {
+                    invalidReson = $"Invalid student registration number ({unvalidatedGrade.StudentRegistrationNumber})";
+                    isValidList = false;
+                    break;
+                }
+                ValidatedStudentGrade validGrade = new(studentRegistrationNumber, examGrade, activityGrade);
+                validatedGrades.Add(validGrade);
+            }
+
+            if (isValidList)
+            {
+                return new ValidatedExamGrades(validatedGrades);
+            }
+            else
+            {
+                return new InvalidatedExamGrades(examGrades.GradeList, invalidReson);
+            }
+
         }
 
         public static IExamGrades CalculateFinalGrades(IExamGrades examGrades) => examGrades.Match(
             whenUnvalidatedExamGrades: unvalidaTedExam => unvalidaTedExam,
-            whenInvalidExamGrades: invalidExam => invalidExam,
+            whenInvalidatedExamGrades: invalidExam => invalidExam,
             whenCalculatedExamGrades: calculatedExam => calculatedExam,
             whenPublishedExamGrades: publishedExam => publishedExam,
-            whenValidatedExamGrades: CalculateFinalGrade
+            whenValidatedExamGrades: validExamGrades =>
+            {
+                var calculatedGrade = validExamGrades.GradeList.Select(validGrade =>
+                                            new CalculatedSudentGrade(validGrade.StudentRegistrationNumber,
+                                                                      validGrade.ExamGrade,
+                                                                      validGrade.ActivityGrade,
+                                                                      validGrade.ExamGrade + validGrade.ActivityGrade));
+                return new CalculatedExamGrades(calculatedGrade.ToList().AsReadOnly());
+            }
         );
-
-        private static IExamGrades CalculateFinalGrade(ValidatedExamGrades validExamGrades) =>
-            new CalculatedExamGrades(validExamGrades.GradeList
-                                                    .Select(CalculateStudentFinalGrade)
-                                                    .ToList()
-                                                    .AsReadOnly());
-
-        private static CalculatedSudentGrade CalculateStudentFinalGrade(ValidatedStudentGrade validGrade) => 
-            new CalculatedSudentGrade(validGrade.StudentRegistrationNumber,
-                                      validGrade.ExamGrade,
-                                      validGrade.ActivityGrade,
-                                      validGrade.ExamGrade + validGrade.ActivityGrade);
 
         public static IExamGrades PublishExamGrades(IExamGrades examGrades) => examGrades.Match(
             whenUnvalidatedExamGrades: unvalidaTedExam => unvalidaTedExam,
-            whenInvalidExamGrades: invalidExam => invalidExam,
+            whenInvalidatedExamGrades: invalidExam => invalidExam,
             whenValidatedExamGrades: validatedExam => validatedExam,
             whenPublishedExamGrades: publishedExam => publishedExam,
-            whenCalculatedExamGrades: GenerateExport);
+            whenCalculatedExamGrades: calculatedExam =>
+            {
+                StringBuilder csv = new();
+                calculatedExam.GradeList.Aggregate(csv, (export, grade) => export.AppendLine($"{grade.StudentRegistrationNumber.Value}, {grade.ExamGrade}, {grade.ActivityGrade}, , {grade.FinalGrade}"));
 
-        private static IExamGrades GenerateExport(CalculatedExamGrades calculatedExam) => 
-            new PublishedExamGrades(calculatedExam.GradeList, 
-                                    calculatedExam.GradeList.Aggregate(new StringBuilder(), CreateCsvLine).ToString(), 
-                                    DateTime.Now);
+                PublishedExamGrades publishedExamGrades = new(calculatedExam.GradeList, csv.ToString(), DateTime.Now);
 
-        private static StringBuilder CreateCsvLine(StringBuilder export, CalculatedSudentGrade grade) =>
-            export.AppendLine($"{grade.StudentRegistrationNumber.Value}, {grade.ExamGrade}, {grade.ActivityGrade}, {grade.FinalGrade}");
+                return publishedExamGrades;
+            });
     }
 }

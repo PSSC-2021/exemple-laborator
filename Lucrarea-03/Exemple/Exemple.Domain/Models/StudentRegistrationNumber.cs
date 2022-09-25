@@ -1,6 +1,4 @@
-﻿using LanguageExt;
-using static LanguageExt.Prelude;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -34,16 +32,18 @@ namespace Exemple.Domain.Models
             return Value;
         }
 
-        public static Option<StudentRegistrationNumber> TryParse(string stringValue)
+        public static bool TryParse(string stringValue, out StudentRegistrationNumber registrationNumber)
         {
+            bool isValid = false;
+            registrationNumber = null;
+
             if (IsValid(stringValue))
             {
-                return Some<StudentRegistrationNumber>(new(stringValue));
+                isValid = true;
+                registrationNumber = new(stringValue);
             }
-            else
-            {
-                return None;
-            }
+
+            return isValid;
         }
     }
 }

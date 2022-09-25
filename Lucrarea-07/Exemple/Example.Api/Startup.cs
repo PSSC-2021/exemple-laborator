@@ -1,21 +1,17 @@
 using Example.Data;
 using Example.Data.Repositories;
+using Example.Events;
+using Example.Events.ServiceBus;
 using Exemple.Domain;
 using Exemple.Domain.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Example.Api
 {
@@ -37,6 +33,12 @@ namespace Example.Api
             services.AddTransient<IGradesRepository, GradesRepository>();
             services.AddTransient<IStudentsRepository, StudentsRepository>();
             services.AddTransient<PublishGradeWorkflow>();
+            services.AddSingleton<IEventSender, ServiceBusTopicEventSender>();
+
+            services.AddAzureClients(builder =>
+            {
+                builder.AddServiceBusClient(Configuration.GetConnectionString("ServiceBus"));
+            });
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

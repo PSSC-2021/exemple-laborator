@@ -12,4 +12,9 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Example.Dto\Example.Dto.csproj" />
+    <ProjectReference Include="..\Example.Events\Example.Events.csproj" />
+  </ItemGroup>
+
 </Project>
