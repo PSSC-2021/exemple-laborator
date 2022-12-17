@@ -12,6 +12,7 @@ using Example.Data.Repositories;
 using Example.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Data.SqlClient;
 
 namespace Exemple
 {
@@ -19,17 +20,52 @@ namespace Exemple
     {
         private static readonly Random random = new Random();
 
-        private static string ConnectionString = "Server=LAPTOP-5O6G7HEC\\DEVELOPER;Database=PSSC-sample;Trusted_Connection=True;MultipleActiveResultSets=true";
+        //private static string ConnectionString = "Server=localhost\\SQLEXPRESS;Database=master;Trusted_Connection=True;Pooling=true";
 
         static async Task Main(string[] args)
         {
+            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
+
+                builder.DataSource = "tcp:pssc2022.database.windows.net"; 
+                builder.UserID = "denis";            
+                builder.Password = "Pssc2022@";     
+                builder.InitialCatalog = "Students";
+            try 
+            {
+         
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    Console.WriteLine("\nQuery data example:");
+                    Console.WriteLine("=========================================\n");
+                    
+                    connection.Open();       
+
+                    String sql = "SELECT Name, RegistrationNumber FROM dbo.Student";
+
+                    using (SqlCommand commanding = new SqlCommand(sql, connection))
+                    {
+                        using (SqlDataReader reader = commanding.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Console.WriteLine("{0} {1}", reader.GetString(0), reader.GetString(1));
+                            }
+                        }
+                    }                    
+                }
+            }
+            catch (SqlException e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            
             using ILoggerFactory loggerFactory = ConfigureLoggerFactory();
             ILogger<PublishGradeWorkflow> logger = loggerFactory.CreateLogger<PublishGradeWorkflow>();
 
             var listOfGrades = ReadListOfGrades().ToArray();
             PublishGradesCommand command = new(listOfGrades);
             var dbContextBuilder = new DbContextOptionsBuilder<GradesContext>()
-                                                .UseSqlServer(ConnectionString)
+                                                .UseSqlServer(builder.ConnectionString)
                                                 .UseLoggerFactory(loggerFactory);
             GradesContext gradesContext = new GradesContext(dbContextBuilder.Options);
             StudentsRepository studentsRepository = new(gradesContext);
