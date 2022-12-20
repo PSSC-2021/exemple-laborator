@@ -46,6 +46,6 @@ namespace Exemple.Domain.Models
             }
         }
 
-        private static bool IsValid(decimal numericGrade) => numericGrade > 0 && numericGrade <= 10;
+        private static bool IsValid(decimal numericGrade) => numericGrade >= 0;
     }
 }

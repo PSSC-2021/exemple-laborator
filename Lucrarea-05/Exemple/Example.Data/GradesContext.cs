@@ -20,8 +20,8 @@ namespace Example.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<StudentDto>().ToTable("Student").HasKey(s => s.StudentId);
-            modelBuilder.Entity<GradeDto>().ToTable("Grade").HasKey(s => s.GradeId);
+            modelBuilder.Entity<StudentDto>().ToTable("Product").HasKey(s => s.ProductId);
+            modelBuilder.Entity<GradeDto>().ToTable("Command").HasKey(s => s.CommandId);
         }
     }
 }

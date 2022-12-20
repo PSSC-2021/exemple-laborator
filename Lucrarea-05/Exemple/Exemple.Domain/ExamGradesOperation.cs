@@ -25,12 +25,12 @@ namespace Exemple.Domain
             unvalidatedStudentGrade => ValidateStudentGrade(checkStudentExists, unvalidatedStudentGrade);
 
         private static EitherAsync<string, ValidatedStudentGrade> ValidateStudentGrade(Func<StudentRegistrationNumber, Option<StudentRegistrationNumber>> checkStudentExists, UnvalidatedStudentGrade unvalidatedGrade)=>
-            from examGrade in Grade.TryParseGrade(unvalidatedGrade.ExamGrade)
-                                   .ToEitherAsync($"Invalid exam grade ({unvalidatedGrade.StudentRegistrationNumber}, {unvalidatedGrade.ExamGrade})")
-            from activityGrade in Grade.TryParseGrade(unvalidatedGrade.ActivityGrade)
-                                   .ToEitherAsync($"Invalid activity grade ({unvalidatedGrade.StudentRegistrationNumber}, {unvalidatedGrade.ActivityGrade})")
-            from studentRegistrationNumber in StudentRegistrationNumber.TryParse(unvalidatedGrade.StudentRegistrationNumber)
-                                   .ToEitherAsync($"Invalid student registration number ({unvalidatedGrade.StudentRegistrationNumber})")
+            from examGrade in Grade.TryParseGrade(unvalidatedGrade.Quantity)
+                                   .ToEitherAsync($"Invalid exam grade ({unvalidatedGrade.Name}, {unvalidatedGrade.Quantity})")
+            from activityGrade in Grade.TryParseGrade(unvalidatedGrade.Subtotal)
+                                   .ToEitherAsync($"Invalid activity grade ({unvalidatedGrade.Name}, {unvalidatedGrade.Subtotal})")
+            from studentRegistrationNumber in StudentRegistrationNumber.TryParse(unvalidatedGrade.Name)
+                                   .ToEitherAsync($"Invalid student registration number ({unvalidatedGrade.Name})")
             from studentExists in checkStudentExists(studentRegistrationNumber)
                                    .ToEitherAsync($"Student {studentRegistrationNumber.Value} does not exist.")
             select new ValidatedStudentGrade(studentRegistrationNumber, examGrade, activityGrade);
@@ -80,8 +80,8 @@ namespace Exemple.Domain
 
         private static CalculatedExamGrades MergeGrades(IEnumerable<CalculatedSudentGrade> newList, IEnumerable<CalculatedSudentGrade> existingList)
         {
-            var updatedAndNewGrades = newList.Select(grade => grade with { GradeId = existingList.FirstOrDefault(g => g.StudentRegistrationNumber == grade.StudentRegistrationNumber)?.GradeId ?? 0, IsUpdated = true });
-            var oldGrades = existingList.Where(grade => !newList.Any(g => g.StudentRegistrationNumber == grade.StudentRegistrationNumber));
+            var updatedAndNewGrades = newList.Select(grade => grade with { CommandId = existingList.FirstOrDefault(g => g.Name == grade.Name)?.CommandId ?? 0, IsUpdated = true });
+            var oldGrades = existingList.Where(grade => !newList.Any(g => g.Name == grade.Name));
             var allGrades = updatedAndNewGrades.Union(oldGrades)
                                                .ToList()
                                                .AsReadOnly();
@@ -102,6 +102,6 @@ namespace Exemple.Domain
                                     DateTime.Now);
 
         private static StringBuilder CreateCsvLine(StringBuilder export, CalculatedSudentGrade grade) =>
-            export.AppendLine($"{grade.StudentRegistrationNumber.Value}, {grade.ExamGrade}, {grade.ActivityGrade}, {grade.FinalGrade}");
+            export.AppendLine($"{grade.Name.Value}, {grade.Quantity}, {grade.Subtotal}, {grade.Total}");
     }
 }

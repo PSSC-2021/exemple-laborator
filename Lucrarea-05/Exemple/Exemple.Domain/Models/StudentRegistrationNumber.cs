@@ -11,7 +11,7 @@ namespace Exemple.Domain.Models
 {
     public record StudentRegistrationNumber
     {
-        private static readonly Regex ValidPattern = new("^LM[0-9]{5}$");
+        private static readonly Regex ValidPattern = new("[0-9]$");
 
         public string Value { get; }
 

@@ -19,10 +19,10 @@ namespace Example.Data.Repositories
         public TryAsync<List<StudentRegistrationNumber>> TryGetExistingStudents(IEnumerable<string> studentsToCheck) => async () =>
         {
             var students = await gradesContext.Students
-                                              .Where(student => studentsToCheck.Contains(student.RegistrationNumber))
+                                              .Where(student => studentsToCheck.Contains(student.Name))
                                               .AsNoTracking()
                                               .ToListAsync();
-            return students.Select(student => new StudentRegistrationNumber(student.RegistrationNumber))
+            return students.Select(student => new StudentRegistrationNumber(student.Name))
                            .ToList();
         };
     }

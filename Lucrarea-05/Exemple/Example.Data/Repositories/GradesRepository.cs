@@ -21,47 +21,47 @@ namespace Example.Data.Repositories
 
         public TryAsync<List<CalculatedSudentGrade>> TryGetExistingGrades() => async () => (await (
                           from g in dbContext.Grades
-                          join s in dbContext.Students on g.StudentId equals s.StudentId
-                          select new { s.RegistrationNumber, g.GradeId, g.Exam, g.Activity, g.Final })
+                          join s in dbContext.Students on g.ProductId equals s.ProductId
+                          select new { s.Name, g.ProductId, g.Quantity, g.Subtotal, g.Total })
                           .AsNoTracking()
                           .ToListAsync())
                           .Select(result => new CalculatedSudentGrade(
-                                                    StudentRegistrationNumber: new(result.RegistrationNumber),
-                                                    ExamGrade: new(result.Exam ?? 0m),
-                                                    ActivityGrade: new(result.Activity ?? 0m),
-                                                    FinalGrade: new(result.Final ?? 0m))
+                                                    Name: new(result.Name),
+                                                    Quantity: new(result.Quantity ?? 0m),
+                                                    Subtotal: new(result.Subtotal ?? 0m),
+                                                    Total: new(result.Total ?? 0m))
                           { 
-                            GradeId = result.GradeId
+                            CommandId = result.ProductId
                           })
                           .ToList();
 
         public TryAsync<Unit> TrySaveGrades(PublishedExamGrades grades) => async () =>
         {
-            var students = (await dbContext.Students.ToListAsync()).ToLookup(student=>student.RegistrationNumber);
+            var students = (await dbContext.Students.ToListAsync()).ToLookup(student=>student.Name);
             var newGrades = grades.GradeList
-                                    .Where(g => g.IsUpdated && g.GradeId == 0)
+                                    //.Where(g => g.IsUpdated && g.CommandId == 0)
                                     .Select(g => new GradeDto()
                                     {
-                                        StudentId = students[g.StudentRegistrationNumber.Value].Single().StudentId,
-                                        Exam = g.ExamGrade.Value,
-                                        Activity = g.ActivityGrade.Value,
-                                        Final = g.FinalGrade.Value,
+                                        ProductId = students[g.Name.Value].Single().ProductId,
+                                        Quantity = g.Quantity.Value,
+                                        Subtotal = g.Subtotal.Value,
+                                        Total = g.Total.Value,
                                     });
-            var updatedGrades = grades.GradeList.Where(g => g.IsUpdated && g.GradeId > 0)
-                                    .Select(g => new GradeDto()
-                                    {
-                                        GradeId = g.GradeId,
-                                        StudentId = students[g.StudentRegistrationNumber.Value].Single().StudentId,
-                                        Exam = g.ExamGrade.Value,
-                                        Activity = g.ActivityGrade.Value,
-                                        Final = g.FinalGrade.Value,
-                                    });
+            // var updatedGrades = grades.GradeList.Where(g => g.IsUpdated && g.CommandId > 0)
+            //                         .Select(g => new GradeDto()
+            //                         {
+            //                             CommandId = g.CommandId,
+            //                             ProductId = students[g.Name.Value].Single().ProductId,
+            //                             Quantity = g.Quantity.Value,
+            //                             Subtotal = g.Subtotal.Value,
+            //                             Total = g.Total.Value,
+            //                         });
 
             dbContext.AddRange(newGrades);
-            foreach (var entity in updatedGrades)
-            {
-                dbContext.Entry(entity).State = EntityState.Modified;
-            }
+            // foreach (var entity in updatedGrades)
+            // {
+            //     dbContext.Entry(entity).State = EntityState.Modified;
+            // }
 
             await dbContext.SaveChangesAsync();
 

@@ -40,7 +40,7 @@ namespace Exemple
                     
                     connection.Open();       
 
-                    String sql = "SELECT Name, RegistrationNumber FROM dbo.Student";
+                    String sql = "SELECT * FROM dbo.Product";
 
                     using (SqlCommand commanding = new SqlCommand(sql, connection))
                     {
@@ -48,7 +48,7 @@ namespace Exemple
                         {
                             while (reader.Read())
                             {
-                                Console.WriteLine("{0} {1}", reader.GetString(0), reader.GetString(1));
+                                Console.WriteLine("{0} {1}", reader.GetString(1), reader.GetString(2));
                             }
                         }
                     }                    
@@ -106,25 +106,20 @@ namespace Exemple
             do
             {
                 //read registration number and grade and create a list of greads
-                var registrationNumber = ReadValue("Registration Number: ");
-                if (string.IsNullOrEmpty(registrationNumber))
+                var name = ReadValue("Nume produs: ");
+                if (string.IsNullOrEmpty(name))
                 {
                     break;
                 }
 
-                var examGrade = ReadValue("Exam Grade: ");
-                if (string.IsNullOrEmpty(examGrade))
+                var quantity = ReadValue("Cantitate: ");
+                if (string.IsNullOrEmpty(quantity))
                 {
                     break;
                 }
+                string subtotal="10";
 
-                var activityGrade = ReadValue("Activity Grade: ");
-                if (string.IsNullOrEmpty(activityGrade))
-                {
-                    break;
-                }
-
-                listOfGrades.Add(new(registrationNumber, examGrade, activityGrade));
+                listOfGrades.Add(new(name, quantity, subtotal));
             } while (true);
             return listOfGrades;
         }

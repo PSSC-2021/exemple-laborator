@@ -30,7 +30,7 @@ namespace Exemple.Domain
         {
             UnvalidatedExamGrades unvalidatedGrades = new UnvalidatedExamGrades(command.InputExamGrades);
 
-            var result = from students in studentsRepository.TryGetExistingStudents(unvalidatedGrades.GradeList.Select(grade => grade.StudentRegistrationNumber))
+            var result = from students in studentsRepository.TryGetExistingStudents(unvalidatedGrades.GradeList.Select(grade => grade.Name))
                                           .ToEither(ex => new FailedExamGrades(unvalidatedGrades.GradeList, ex) as IExamGrades)
                          from existingGrades in gradesRepository.TryGetExistingGrades()
                                           .ToEither(ex => new FailedExamGrades(unvalidatedGrades.GradeList, ex) as IExamGrades)
